@@ -76,4 +76,28 @@ export  class ApiAuth extends QueryAuth{
 
      return res.end(JSON.stringify({message:"Usuário Logado"}))
     }
+    updateUser = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
+
+        let data = ''
+        for await (const chunk of req){
+            data += chunk.toString();
+        }
+
+        const {name,email,password,cep,cidade,estado,numero,rua} = JSON.parse(data);
+        
+        if(!email || !password){
+            throw new APIError(ErrCode.InvalidArgument,'Email ou senha estão vazil')
+        }
+
+        console.log(email,password,cep,cidade,estado,numero,rua)
+
+        const updateUser = this.updateUserData({name,email,password,cep,cidade,estado,numero,rua})
+
+        if(!updateUser.changes){
+            throw new APIError(ErrCode.Internal,'Erro ao atualizar usuário')
+        }
+
+        return res.end(JSON.stringify({message:"Usuário atualizado"}))
+
+    }
 } ;

@@ -32,6 +32,11 @@ export const authLogin = api.raw({method:'POST',path:"/auth/login",expose:true},
     async(req,res) =>  new ApiAuth().postLogin(req,res)
 
 )
+export const authUpdate = api.raw({method:'POST',path:"/auth/update",expose:true},
+    
+    async(req,res) =>  new ApiAuth().updateUser(req,res)
+
+)
 
 
 const QueryDatabase = new QueryAuth()
