@@ -37,6 +37,12 @@ export const authUpdate = api.raw({method:'POST',path:"/auth/update",expose:true
     async(req,res) =>  new ApiAuth().updateUser(req,res)
 
 )
+export const authSession = api.raw({method:'GET',path:"/auth/session",expose:true},
+    
+    async(req,res) =>  new ApiAuth().getSession(req,res)
 
+)
+
+export const client = api.static({expose:true,path:'/!path',dir:"./assets"})
 
 const QueryDatabase = new QueryAuth()
