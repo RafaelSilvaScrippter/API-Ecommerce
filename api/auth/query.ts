@@ -31,9 +31,9 @@ export class QueryAuth{
     }
     selectUser({email}:{email:string}){
          return this.db.prepare(/*SQL */ `
-           SELECT "email" FROM "users"
+           SELECT "email","password" FROM "users"
            WHERE "email" = ?
-        `).get(email) as {email:string,id:number}
+        `).get(email) as {email:string,id:number,password:string}
     }
     insertSession({session_hash,user_id}:{session_hash:string,user_id:number;}){
          return this.db.prepare(/*SQL */ `

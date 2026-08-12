@@ -27,9 +27,9 @@ export const authCreate = api({method:'POST',path:"/auth/create"},
 
 )
 
-export const authLogin = api({method:'POST',path:"/auth/login",expose:true},
+export const authLogin = api.raw({method:'POST',path:"/auth/login",expose:true},
     
-    async(p: PingParams & BodyLoginUser):Promise<PingResponse & LoginResponse> => new ApiAuth().postLogin(p)
+    async(req,res) =>  new ApiAuth().postLogin(req,res)
 
 )
 
