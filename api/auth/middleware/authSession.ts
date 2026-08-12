@@ -1,29 +1,26 @@
-import { Cookie, HandlerResponse, Header, MiddlewareRequest, Next } from "encore.dev/api";
+import { APIError, Cookie, ErrCode, HandlerResponse, Header, middleware, MiddlewareRequest, Next } from "encore.dev/api";
 import { IncomingMessage } from "http";
 import { QueryAuth } from "../query";
+import { auth } from "~encore/clients";
 
 const queryAuth = new QueryAuth()
 
-export async function middlewareAuth(req:MiddlewareRequest,next:Next):Promise<HandlerResponse> {
+export  const middlewareAuth = middleware({target:{auth:true}},async(req:MiddlewareRequest,next:Next):Promise<HandlerResponse> => {
 
     const cookie = req.rawRequest?.headers['cookie']
 
     if(!cookie?.includes('__Secure-sid=')){
-        req.rawResponse?.end(JSON.stringify({message:"Cookie inválido"}))
         if(req.rawResponse){
+            req.rawResponse?.end(JSON.stringify({message:"Cookie inválido"}))
             req.rawResponse.statusCode = 409;
         }
 
     }
      const replaceCookie = cookie?.replace('__Secure-sid=','')
 
-    if((replaceCookie === undefined)){
-         req.rawResponse?.end(JSON.stringify({message:"Token inválido"}))
-    }
-
     if(replaceCookie){  
         const getUserPerSession = queryAuth.selectSession({sid_hash:replaceCookie})
-        req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email} };
+        req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email,id:getUserPerSession.id} };
 
         if(!getUserPerSession){
             req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))
@@ -31,5 +28,4 @@ export async function middlewareAuth(req:MiddlewareRequest,next:Next):Promise<Ha
     }
     
     return await next(req);
-
-}
+})

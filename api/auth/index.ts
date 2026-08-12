@@ -42,7 +42,7 @@ export const authSession = api.raw({method:'GET',path:"/auth/session",expose:tru
     async(req,res) =>  new ApiAuth().getSession(req,res)
 
 )
-export const authAllDados = api.raw({method:'GET',path:"/auth/dados",expose:true},
+export const authAllDados = api.raw({method:'GET',path:"/auth/dados",expose:true,auth:true},
     
     async(req,res) =>  new ApiAuth().selectDados(req,res)
 

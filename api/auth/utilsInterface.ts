@@ -1,4 +1,4 @@
-import { Cookie, CookieWithOptions, Header, HttpStatus, Query } from "encore.dev/api";
+import { Cookie, CookieWithOptions, Header, HttpStatus } from "encore.dev/api";
 import { IsEmail } from "encore.dev/validate";
 
 export interface PingParams {
