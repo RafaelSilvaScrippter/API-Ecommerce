@@ -33,11 +33,12 @@ export class QueryAuth{
     }
     selectUser({email}:{email:string}){
          return this.db.prepare(/*SQL */ `
-           SELECT "email","password" FROM "users"
+           SELECT "id","email","password" FROM "users"
            WHERE "email" = ?
         `).get(email) as {email:string,id:number,password:string}
     }
     insertSession({session_hash,user_id}:{session_hash:string,user_id:number;}){
+        console.log({session_hash,user_id})
          return this.db.prepare(/*SQL */ `
           INSERT OR IGNORE INTO "sessions"
           (
@@ -57,5 +58,13 @@ export class QueryAuth{
             WHERE "email" = ?
             
         `).run(name,email,password,cep,cidade,estado,numero,rua,email)
+    }
+    selectSession({sid_hash}:{sid_hash:string}){
+        return this.db.prepare(/*sql */`
+        
+            SELECT "u"."name" FROM "sessions" AS "s" 
+            INNER JOIN "users" AS "u" ON "s"."user_id" = "u"."id"
+            WHERE "s"."session_hash" = ?
+        `).get(sid_hash) as {name:string}
     }
 }
