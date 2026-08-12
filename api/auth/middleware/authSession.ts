@@ -23,7 +23,7 @@ export async function middlewareAuth(req:MiddlewareRequest,next:Next):Promise<Ha
 
     if(replaceCookie){  
         const getUserPerSession = queryAuth.selectSession({sid_hash:replaceCookie})
-        req.data.myMiddlewareData = { userData: getUserPerSession.name };
+        req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email} };
 
         if(!getUserPerSession){
             req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))

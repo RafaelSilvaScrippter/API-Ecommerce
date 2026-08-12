@@ -32,16 +32,20 @@
             })
             const dados= await response.json()
             console.log(dados)
-        }
-
-        
+        }    
         async function session(){
             const response = await fetch(`/auth/session`)
             const dados= await response.json()
             console.log(dados)
         }
+        async function getAllDados(){
+            const response = await fetch(`/auth/dados`)
+            const dados= await response.json()
+            console.log(dados)
+        }
         session()
-        updateData()
+        getAllDados()
+        // updateData()
         // postLogin()
     </script>
 </body>

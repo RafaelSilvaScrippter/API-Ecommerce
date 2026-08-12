@@ -1,8 +1,7 @@
-import { api, APIError, ErrCode, HttpStatus } from "encore.dev/api"
-import { BodyCreateUser, BodyLoginUser, LoginResponse, PingParams, PingResponse } from "../utilsInterface"
+import {  APIError, ErrCode, HttpStatus } from "encore.dev/api"
+import { BodyCreateUser, PingParams, PingResponse } from "../utilsInterface"
 import { QueryAuth } from "../query"
 import { randomBytes } from "node:crypto"
-import { argon2d } from "argon2"
 import argon2 from 'argon2'
 import { IncomingMessage, ServerResponse } from "node:http"
 import { APICallMeta, currentRequest } from "encore.dev"
@@ -112,5 +111,14 @@ export  class ApiAuth extends QueryAuth{
         res.statusCode = 200;
 
         return res.end(JSON.stringify({username:myData.userData,session:true}))
+    }
+    selectDados = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
+        const callMeta = currentRequest()as APICallMeta
+
+         const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
+
+         const dados = this.selectAllDados({email:myData.userData.email})
+
+        return res.end(JSON.stringify({message:'Meus dados',dados}))
     }
 } ;

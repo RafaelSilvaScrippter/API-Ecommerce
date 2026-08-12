@@ -62,9 +62,16 @@ export class QueryAuth{
     selectSession({sid_hash}:{sid_hash:string}){
         return this.db.prepare(/*sql */`
         
-            SELECT "u"."name" FROM "sessions" AS "s" 
+            SELECT "u"."name","u"."email" FROM "sessions" AS "s" 
             INNER JOIN "users" AS "u" ON "s"."user_id" = "u"."id"
             WHERE "s"."session_hash" = ?
-        `).get(sid_hash) as {name:string}
+        `).get(sid_hash) as {name:string,email:string}
+    }
+     selectAllDados({email}:{email:string}){
+        return this.db.prepare(/*sql */`
+        
+            SELECT "name","email","cep","cidade","estado","numero","rua" FROM "users" 
+            WHERE "email" = ?
+        `).get(email) as {name:string,email:string,cep:string,cidade:string,estado:string,numero:string,rua:string}
     }
 }
