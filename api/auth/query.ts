@@ -12,6 +12,8 @@ export interface InterfaceCreateUser{
     rua?:string
 }
 
+type updateUser = Omit<InterfaceCreateUser,'name'>
+
 export class QueryAuth{
     db:Database.Database;
     constructor(){
@@ -44,5 +46,16 @@ export class QueryAuth{
           VALUES (?,?)
 
         `).run(session_hash,user_id)
+    }
+    updateUserData({name,email,password,cep,cidade,estado,numero,rua}:updateUser & {name:string}){
+        return this.db.prepare(/*SQL */`
+        
+            UPDATE  "users" 
+                SET "name" = ?, "email" = ?, "password" = ?,
+               "cep" = ?, "cidade" = ?,
+               "estado" = ?, "numero" = ?, "rua" = ?
+            WHERE "email" = ?
+            
+        `).run(name,email,password,cep,cidade,estado,numero,rua,email)
     }
 }
