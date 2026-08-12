@@ -22,6 +22,17 @@
             const dados= await response.json()
             console.log(dados)
         }
+        async function CreateUser(){
+            const response = await fetch(`/auth/create`,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({name:"Rafael Silva",email:"rafa@gmail.com",password:"rafa",cep:"99708-304"})
+            })
+            const dados= await response.json()
+            console.log(dados)
+        }
         async function updateData(){
             const response = await fetch(`/auth/update`,{
                 method:"POST",
@@ -34,12 +45,17 @@
             console.log(dados)
         }    
         async function session(){
-            const response = await fetch(`/auth/session`)
+            const response = await fetch(`/auth/session`,{
+                method:"GET"
+            })
             const dados= await response.json()
             console.log(dados)
         }
         async function getAllDados(){
-            const response = await fetch(`/auth/dados`)
+            const response = await fetch(`/auth/dados`,{
+                method:"GET",
+                credentials:"include"
+            })
             const dados= await response.json()
             console.log(dados)
         }
@@ -47,6 +63,7 @@
         getAllDados()
         // updateData()
         // postLogin()
+        // CreateUser()
     </script>
 </body>
 </html>

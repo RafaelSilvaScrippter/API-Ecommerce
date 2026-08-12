@@ -26,6 +26,13 @@ export  class ApiAuth extends QueryAuth{
         if(!inserUser.changes){
             throw new APIError(ErrCode.Internal,'Erro ao inserir usuário')
         }
+        
+        const insertAddress = this.insertAddress({cep:p.cep,cidade:p.cidade,estado:p.estado,numero:p.numero,rua:p.rua})
+        
+        if(!insertAddress.changes){
+            
+            throw new APIError(ErrCode.Internal,'Erro ao inserir endereço')
+        }
 
         return {message:'Usuário criado',status:HttpStatus.Created}
     }
@@ -66,9 +73,11 @@ export  class ApiAuth extends QueryAuth{
 
         const stringSession =  randomBytes(32).toString('hex')
         
+
         const insertSession = this.insertSession({session_hash:stringSession,user_id:selectUserEmail.id})
-        console.log(insertSession)
         
+        console.log({insertSession})
+
         if(!insertSession.changes){
             throw new APIError(ErrCode.Internal,"Erro ao criar sessão")
         }
@@ -79,6 +88,8 @@ export  class ApiAuth extends QueryAuth{
     updateUser = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
 
         const callMeta = currentRequest()as APICallMeta
+
+        const myData:{userData:{name:string;email:string,id:number}} = callMeta.middlewareData?.myMiddlewareData
 
         let data = ''
         for await (const chunk of req){
@@ -93,11 +104,13 @@ export  class ApiAuth extends QueryAuth{
 
        const hashPassword = await argon2.hash(password)
 
-        const updateUser = this.updateUserData({name,email,password:hashPassword,cep,cidade,estado,numero,rua})
+        const updateUser = this.updateUserData({name,email,password:hashPassword})
 
         if(!updateUser.changes){
             throw new APIError(ErrCode.Internal,'Erro ao atualizar usuário')
         }
+
+        const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:myData.userData.id})
 
         return res.end(JSON.stringify({message:"Usuário atualizado"}))
 
@@ -114,8 +127,11 @@ export  class ApiAuth extends QueryAuth{
     }
     selectDados = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
         const callMeta = currentRequest()as APICallMeta
+        console.log(callMeta)
 
          const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
+
+         console.log(myData)
 
          const dados = this.selectAllDados({email:myData.userData.email})
 
