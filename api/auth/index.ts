@@ -3,6 +3,7 @@ import { api, APIError, Cookie, ErrCode, Header, HttpStatus, Query } from "encor
 import { TableAuth } from "./tablesAuth.js";
 import { BodyCreateUser, PingParams, PingResponse } from "./utilsInterface.js";
 import { QueryAuth } from "./query.js";
+import { ApiAuth } from "./controller/index.js";
 
 
 export class CreateDatabase{
@@ -17,29 +18,12 @@ export class CreateDatabase{
     }
 }
 
-export  class ApiAuth extends QueryAuth{
-    postUser = async (p:PingParams & BodyCreateUser):Promise<PingResponse> =>{
 
-        if(!p.name || !p.email || !p.password){
-            throw new APIError(ErrCode.InvalidArgument,"Dados inválidos") 
-        }
-
-        const inserUser = this.insertUser({name:p.name,email:p.email,password:p.password})
-
-        return {message:'Hello World',status:HttpStatus.OK}
-    }
-} ;
 
 
 export const auth = api({method:'POST',path:"/auth/create"},
     
-    async(p: PingParams & BodyCreateUser):Promise<PingResponse> => {
-        const {message,status} = await new  ApiAuth().postUser(p)
-      return  {
-        message,
-        status
-      }
-    }
+    async(p: PingParams & BodyCreateUser):Promise<PingResponse> => new ApiAuth().postUser(p)
 
 )
 

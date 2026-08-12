@@ -20,14 +20,19 @@ export class QueryAuth{
     }
 
     insertUser({name,email,password,cep,cidade,estado,numero,rua}:InterfaceCreateUser){
-        console.log(name)
-        const dados = this.db.prepare(/*SQL */ `
+
+        return this.db.prepare(/*SQL */ `
             INSERT OR IGNORE INTO "users" (
                 "name","email","password",
                 "cep","cidade","estado",
                 "numero","rua"
             ) VALUES (?,?,?,?,?,?,?,?)
         `).run(name,email,password,cep,cidade,estado,numero,rua)
-        console.log('Dados do insert User',dados)
+    }
+    selectUser({email}:{email:string}){
+         return this.db.prepare(/*SQL */ `
+           SELECT "email" FROM "users"
+           WHERE "email" = ?
+        `).get(email) as {email:string}
     }
 }
