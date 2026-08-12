@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API ECOMMERCE</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+
+
+
+    <script>
+        async function postLogin(){
+            const response = await fetch(`/auth/login`,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({email:"rafa@gmail.com",password:"rafa"})
+            })
+            const dados= await response.json()
+            console.log(dados)
+        }
+        async function updateData(){
+            const response = await fetch(`/auth/update`,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({name:"Rafa Silva",email:"rafa@gmail.com",password:"rafa"})
+            })
+            const dados= await response.json()
+            console.log(dados)
+        }
+
+        
+        async function session(){
+            const response = await fetch(`/auth/session`)
+            const dados= await response.json()
+            console.log(dados)
+        }
+        session()
+        updateData()
+        // postLogin()
+    </script>
+</body>
+</html>
