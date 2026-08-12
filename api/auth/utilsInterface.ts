@@ -1,4 +1,4 @@
-import { Cookie, Header, HttpStatus, Query } from "encore.dev/api";
+import { Cookie, CookieWithOptions, Header, HttpStatus, Query } from "encore.dev/api";
 import { IsEmail } from "encore.dev/validate";
 
 export interface PingParams {
@@ -20,3 +20,12 @@ export interface BodyCreateUser{
     numero?:string;
     rua?:string
 }
+
+export interface BodyLoginUser {
+    email?:string;
+    password?:string;
+}
+
+export interface LoginResponse{
+    sessionId:CookieWithOptions<string>
+} 

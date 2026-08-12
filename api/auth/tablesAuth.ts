@@ -12,4 +12,10 @@ export const TableAuth = /*SQL */ `
         "numero" TEXT,
         "rua" TEXT
     ) STRICT;
+    CREATE TABLE IF NOT EXISTS "sessions" (
+        "id" INTEGER PRIMARY KEY,
+        "session_hash" TEXT NOT NULL UNIQUE,
+        "user_id" INTEGER NOT NULL,
+        FOREIGN KEY ("user_id") REFERENCES "users" ("id")
+    ) STRICT;
 `
