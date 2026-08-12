@@ -33,6 +33,16 @@ export class QueryAuth{
          return this.db.prepare(/*SQL */ `
            SELECT "email" FROM "users"
            WHERE "email" = ?
-        `).get(email) as {email:string}
+        `).get(email) as {email:string,id:number}
+    }
+    insertSession({session_hash,user_id}:{session_hash:string,user_id:number;}){
+         return this.db.prepare(/*SQL */ `
+          INSERT OR IGNORE INTO "sessions"
+          (
+            "session_hash","user_id"
+          )
+          VALUES (?,?)
+
+        `).run(session_hash,user_id)
     }
 }
