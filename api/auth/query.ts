@@ -42,11 +42,11 @@ export class QueryAuth{
          return this.db.prepare(/*SQL */ `
           INSERT OR IGNORE INTO "sessions"
           (
-            "session_hash","user_id"
+            "session_hash","user_id","revoked"
           )
-          VALUES (?,?)
+          VALUES (?,?,?)
 
-        `).run(session_hash,user_id)
+        `).run(session_hash,user_id,0)
     }
     updateUserData({name,email,password}:updateUser & {name:string}){
         return this.db.prepare(/*SQL */`
@@ -64,6 +64,27 @@ export class QueryAuth{
             INNER JOIN "data_user" AS "u" ON "s"."user_id" = "u"."id"
             WHERE "s"."session_hash" = ?
         `).get(sid_hash) as {name:string,email:string,id:number}
+    }
+    selectSessionEmail({email}:{email:string}){
+        console.log({email})
+        return this.db.prepare(/*SQL */ `
+        
+            SELECT "revoked" FROM "sessions" AS "s"
+            WHERE "s"."user_id" = (SELECT "id" FROM "data_user" WHERE "email" = ?)
+            
+        `).get(email) as {revoked:number}
+    }
+    revokedSession({email}:{email:string}){
+
+
+        return this.db.prepare(/*SQL */`   
+            UPDATE "sessions" AS "s"
+            SET "revoked" = ?
+            FROM "data_user" AS "u" 
+            WHERE "u"."id" = "s"."user_id" AND  "email" = ?
+            
+        `).run(1,email)
+        
     }
     selectAllDados({email}:{email:string}){
         return this.db.prepare(/*sql */`
@@ -83,12 +104,13 @@ export class QueryAuth{
         `).run(cep,cidade,estado,numero,rua)
     }
     updateAddress({cep,cidade,estado,numero,rua,user_id}:AddressUser & {user_id:number}){
+        console.log(user_id)
          return this.db.prepare(/*SQL */`
         
             UPDATE  "address_user" 
             SET "cep" = ?, "cidade" = ?, "estado" = ?,
             "numero" = ?, "rua" = ?
-            WHERE "user_id" = ?
+            WHERE "id" = ?
             
         `).run(cep,cidade,estado,numero,rua,user_id)
     }
