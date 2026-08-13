@@ -20,6 +20,7 @@ export const TableAuth = /*SQL */ `
         "id" INTEGER PRIMARY KEY,
         "session_hash" TEXT NOT NULL UNIQUE,
         "user_id" INTEGER NOT NULL,
+        "revoked" INTEGER NOT NULL check("revoked" IN (1,0)),
         FOREIGN KEY ("user_id") REFERENCES "data_user" ("id")
     ) STRICT;
 `

@@ -5,7 +5,7 @@ import { auth } from "~encore/clients";
 
 const queryAuth = new QueryAuth()
 
-export  const middlewareAuth = middleware({target:{auth:true}},async(req:MiddlewareRequest,next:Next):Promise<HandlerResponse> => {
+export  const middlewareAuth = middleware(async(req:MiddlewareRequest,next:Next):Promise<HandlerResponse> => {
 
     const cookie = req.rawRequest?.headers['cookie']
 
@@ -23,8 +23,19 @@ export  const middlewareAuth = middleware({target:{auth:true}},async(req:Middlew
         req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email,id:getUserPerSession.id} };
 
         if(!getUserPerSession){
+            if(req.rawResponse){
+                req.rawResponse.statusCode = 401
+            }
             req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))
         }
+        
+        const sessionIsRevoked = queryAuth.selectSessionEmail({email:getUserPerSession.email})
+        
+        if(sessionIsRevoked.revoked === 1)
+            if(req.rawResponse){
+                req.rawResponse.statusCode = 401
+            }
+            req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))
     }
     
     return await next(req);

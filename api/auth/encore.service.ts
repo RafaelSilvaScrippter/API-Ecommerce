@@ -4,6 +4,6 @@ import { middleware } from "encore.dev/api";
 
 export default new Service('auth',{
     middlewares: [
-        middleware(middlewareAuth)
+        middleware({target:{tags:['/auth/update','/auth/dados','/auth/logout']}},middlewareAuth)
     ]
 })

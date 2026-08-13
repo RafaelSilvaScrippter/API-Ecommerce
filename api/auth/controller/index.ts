@@ -111,6 +111,7 @@ export  class ApiAuth extends QueryAuth{
         }
 
         const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:myData.userData.id})
+      
 
         return res.end(JSON.stringify({message:"Usuário atualizado"}))
 
@@ -125,9 +126,8 @@ export  class ApiAuth extends QueryAuth{
 
         return res.end(JSON.stringify({username:myData.userData,session:true}))
     }
-    selectDados = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
+    getDados = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
         const callMeta = currentRequest()as APICallMeta
-        console.log(callMeta)
 
          const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
 
@@ -136,5 +136,30 @@ export  class ApiAuth extends QueryAuth{
          const dados = this.selectAllDados({email:myData.userData.email})
 
         return res.end(JSON.stringify({message:'Meus dados',dados}))
+    }
+    deleteLogout = async(p:IncomingMessage,res:ServerResponse):Promise<ServerResponse | APIError> =>{
+
+        const callMeta = currentRequest()as APICallMeta
+
+        const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
+
+        const selectSession = this.selectSessionEmail({email:myData.userData.email})
+
+        
+        if(selectSession.revoked === 1){
+            throw new APIError(ErrCode.PermissionDenied,'Nenhuma sessão ativa')
+        }
+
+        const revokedSession = this.revokedSession({email:myData.userData.email})
+
+        if(!revokedSession.changes){
+            throw new APIError(ErrCode.Internal,'Erro ao fazer logout')
+        }
+
+        // res.setHeader('Cookie','');
+        
+        
+
+        return res.end(JSON.stringify({message:"lOGOUT"}))
     }
 } ;
