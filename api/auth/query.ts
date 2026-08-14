@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
-import { CreateDatabase } from ".";
+import { CreateDatabase } from "./createDb";
+
 
 export interface InterfaceCreateUser{
     name:string;
@@ -20,7 +21,8 @@ type updateUser = Omit<InterfaceCreateUser,'name'>
 export class QueryAuth{
     db:Database.Database;
     constructor(){
-        const create = new CreateDatabase().create()
+        const create = new CreateDatabase()
+        create.create()
         this.db = new CreateDatabase().db
     }
 
