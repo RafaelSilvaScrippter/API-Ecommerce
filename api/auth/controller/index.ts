@@ -6,7 +6,6 @@ import argon2 from 'argon2'
 import { IncomingMessage, ServerResponse } from "node:http"
 import { APICallMeta, currentRequest } from "encore.dev"
 
-
 export  class ApiAuth extends QueryAuth{
     postUser = async (p:PingParams & BodyCreateUser):Promise<PingResponse> =>{
 
@@ -131,7 +130,7 @@ export  class ApiAuth extends QueryAuth{
 
          const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
 
-         console.log(myData)
+         console.log({myData})
 
          const dados = this.selectAllDados({email:myData.userData.email})
 
@@ -156,7 +155,7 @@ export  class ApiAuth extends QueryAuth{
             throw new APIError(ErrCode.Internal,'Erro ao fazer logout')
         }
 
-        // res.setHeader('Cookie','');
+        res.setHeader('Cookie','');
         
         
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post publicação</title>
+</head>
+<body>
+    <h1>Teste</h1>
+
+
+    <script>
+
+        async function postPublish(){
+            const response = await fetch('/post/publish',{
+                method:"POST",
+                headers:{
+                    'Content-Type':"application/json"
+                },
+                credentials:"include",
+                body:JSON.stringify({name:"Notebook",price:"2000",description:"Um notebook",vendor:"rafa@gmail.com",src:"./files/notebook.jpg"})
+            })
+            const dados = await response.json()
+            console.log(dados)
+        }
+        postPublish()
+
+
+    </script>
+</body>
+</html>

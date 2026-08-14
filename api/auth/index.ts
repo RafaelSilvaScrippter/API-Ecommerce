@@ -1,24 +1,7 @@
 import Database from "better-sqlite3";
-import { api, APIError, Cookie, ErrCode, Header, HttpStatus, Query } from "encore.dev/api";
+import { api } from "encore.dev/api";
 import { TableAuth } from "./tablesAuth.js";
-import { BodyCreateUser, BodyLoginUser, LoginResponse, PingParams, PingResponse } from "./utilsInterface.js";
-import { QueryAuth } from "./query.js";
-import { ApiAuth } from "./controller/index.js";
-
-
-export class CreateDatabase{
-    db:Database.Database;
-    constructor(){
-        this.db = new Database('./api/auth/db.sqlite')
-    }
-
-
-    create(){
-        this.db.exec(TableAuth)
-    }
-}
-
-
+import { BodyCreateUser,PingParams, PingResponse } from "./utilsInterface.js";import { ApiAuth } from "./controller/index.js";
 
 
 export const authCreate = api({method:'POST',path:"/auth/create"},
@@ -53,4 +36,3 @@ export const authLogout = api.raw({method:'DELETE',path:"/auth/logout",expose:tr
 
 export const client = api.static({expose:true,path:'/!path',dir:"./assets"})
 
-const QueryDatabase = new QueryAuth()

@@ -1,41 +1,28 @@
-import { APIError, Cookie, ErrCode, HandlerResponse, Header, middleware, MiddlewareRequest, Next } from "encore.dev/api";
-import { IncomingMessage } from "http";
+import { APIError, ErrCode, HandlerResponse,middleware, MiddlewareRequest, Next } from "encore.dev/api";
 import { QueryAuth } from "../query";
-import { auth } from "~encore/clients";
+
 
 const queryAuth = new QueryAuth()
 
-export  const middlewareAuth = middleware(async(req:MiddlewareRequest,next:Next):Promise<HandlerResponse> => {
+export  const middlewareAuth = middleware({target:{tags:['/post/publish','/post/product']}}, async(req,next) => { 
 
     const cookie = req.rawRequest?.headers['cookie']
-
     if(!cookie?.includes('__Secure-sid=')){
-        if(req.rawResponse){
-            req.rawResponse?.end(JSON.stringify({message:"Cookie inválido"}))
-            req.rawResponse.statusCode = 409;
-        }
-
+        throw new APIError(ErrCode.Unauthenticated,'Autenticação necessária')
     }
-     const replaceCookie = cookie?.replace('__Secure-sid=','')
-
+    const replaceCookie = cookie?.replace('__Secure-sid=','')
+    
     if(replaceCookie){  
         const getUserPerSession = queryAuth.selectSession({sid_hash:replaceCookie})
-        req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email,id:getUserPerSession.id} };
-
+       
+        
         if(!getUserPerSession){
-            if(req.rawResponse){
-                req.rawResponse.statusCode = 401
-            }
-            req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))
+            throw new APIError(ErrCode.Unauthenticated,'Autenticação necessária')
         }
         
         const sessionIsRevoked = queryAuth.selectSessionEmail({email:getUserPerSession.email})
-        
-        if(sessionIsRevoked.revoked === 1)
-            if(req.rawResponse){
-                req.rawResponse.statusCode = 401
-            }
-            req.rawResponse?.end(JSON.stringify({message:"Nenhuma sessão ativa"}))
+
+         req.data.myMiddlewareData = { userData: {name:getUserPerSession.name,email:getUserPerSession.email,id:getUserPerSession.id} };
     }
     
     return await next(req);
