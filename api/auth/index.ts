@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { api } from "encore.dev/api";
 import { TableAuth } from "./tablesAuth.js";
-import { BodyCreateUser,PingParams, PingResponse } from "./utilsInterface.js";import { ApiAuth } from "./controller/index.js";
+import { BodyCreateUser,BodyUpdateUser,PingParams, PingResponse } from "./utilsInterface.js";import { ApiAuth } from "./controller/index.js";
 
 
 export const authCreate = api({method:'POST',path:"/auth/create"},
@@ -15,9 +15,9 @@ export const authLogin = api.raw({method:'POST',path:"/auth/login",expose:true},
     async(req,res) =>  new ApiAuth().postLogin(req,res)
 
 )
-export const authUpdate = api.raw({method:'POST',path:"/auth/update",expose:true,tags:['/auth/update']},
+export const authUpdate = api({method:'POST',path:"/auth/update",expose:true,auth:true},
     
-    async(req,res) =>  new ApiAuth().updateUser(req,res)
+    async(body:BodyUpdateUser):Promise<PingResponse> =>  new ApiAuth().updateUser(body)
 
 )
 export const authSession = api.raw({method:'GET',path:"/auth/session",expose:true},

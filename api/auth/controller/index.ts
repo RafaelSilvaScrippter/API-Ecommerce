@@ -1,10 +1,12 @@
 import {  APIError, ErrCode, HttpStatus } from "encore.dev/api"
-import { BodyCreateUser, PingParams, PingResponse } from "../utilsInterface"
+import { BodyCreateUser, BodyUpdateUser, PingParams, PingResponse } from "../utilsInterface"
 import { QueryAuth } from "../query"
 import { randomBytes } from "node:crypto"
 import argon2 from 'argon2'
 import { IncomingMessage, ServerResponse } from "node:http"
 import { APICallMeta, currentRequest } from "encore.dev"
+import { getAuthData } from "encore.dev/internal/codegen/auth"
+import { SessionUser } from "../utils/interfaces"
 
 export  class ApiAuth extends QueryAuth{
     postUser = async (p:PingParams & BodyCreateUser):Promise<PingResponse> =>{
@@ -84,18 +86,16 @@ export  class ApiAuth extends QueryAuth{
 
      return res.end(JSON.stringify({message:"Usuário Logado"}))
     }
-    updateUser = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
+    updateUser = async(body:BodyUpdateUser):Promise<PingResponse> =>{
+        
+        const authData:SessionUser | null = getAuthData();
 
-        const callMeta = currentRequest()as APICallMeta
-
-        const myData:{userData:{name:string;email:string,id:number}} = callMeta.middlewareData?.myMiddlewareData
-
-        let data = ''
-        for await (const chunk of req){
-            data += chunk.toString();
+        if(!authData){
+            throw new APIError(ErrCode.Unauthenticated,'Usuário não possui sessão')
         }
 
-        const {name,email,password,cep,cidade,estado,numero,rua} = JSON.parse(data);
+
+        const {name,email,password,cep,cidade,estado,numero,rua} =body
         
         if(!email || !password){
             throw new APIError(ErrCode.InvalidArgument,'Email ou senha estão vazil')
@@ -109,10 +109,11 @@ export  class ApiAuth extends QueryAuth{
             throw new APIError(ErrCode.Internal,'Erro ao atualizar usuário')
         }
 
-        const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:myData.userData.id})
-      
+        const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:authData.id})
+    
 
-        return res.end(JSON.stringify({message:"Usuário atualizado"}))
+
+        return {message:'Usuário atualizado',status:HttpStatus.Created}
 
     }
     getSession = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{

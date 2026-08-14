@@ -20,6 +20,16 @@ export interface BodyCreateUser{
     numero?:string;
     rua?:string
 }
+export interface BodyUpdateUser{
+    name?:string;
+    email?:string & IsEmail;
+    password?:string;
+    cep?:string;
+    cidade?:string;
+    estado?:string;
+    numero?:string;
+    rua?:string
+}
 
 export interface BodyLoginUser {
     email?:string;
