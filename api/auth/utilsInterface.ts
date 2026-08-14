@@ -39,3 +39,19 @@ export interface BodyLoginUser {
 export interface LoginResponse{
     sessionId:CookieWithOptions<string>
 } 
+
+
+interface GetAllDados {
+    name:string;
+    email:string;
+    cep:string;
+    cidade:string;
+    estado:string;
+    numero:string;
+    rua:string;
+}
+
+export interface ResponseGetAllDados {
+    message:string;
+    dados:GetAllDados
+}

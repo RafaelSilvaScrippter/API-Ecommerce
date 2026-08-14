@@ -1,13 +1,12 @@
 import {  APIError, ErrCode, HttpStatus } from "encore.dev/api"
-import { BodyCreateUser, BodyUpdateUser, PingParams, PingResponse } from "../utilsInterface"
+import { BodyCreateUser, BodyUpdateUser, PingParams, PingResponse, ResponseGetAllDados } from "../utilsInterface"
 import { QueryAuth } from "../query"
 import { randomBytes } from "node:crypto"
 import argon2 from 'argon2'
 import { IncomingMessage, ServerResponse } from "node:http"
 import { APICallMeta, currentRequest } from "encore.dev"
 import { getAuthData } from "encore.dev/internal/codegen/auth"
-import { SessionUser } from "../utils/interfaces"
-
+import { SessionUser } from "../../utils/interfaces"
 export  class ApiAuth extends QueryAuth{
     postUser = async (p:PingParams & BodyCreateUser):Promise<PingResponse> =>{
 
@@ -109,7 +108,7 @@ export  class ApiAuth extends QueryAuth{
             throw new APIError(ErrCode.Internal,'Erro ao atualizar usuário')
         }
 
-        const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:authData.id})
+        const updateAddress = this.updateAddress({cep,cidade,estado,numero,rua,user_id:authData.userID.id})
     
 
 
@@ -126,16 +125,21 @@ export  class ApiAuth extends QueryAuth{
 
         return res.end(JSON.stringify({username:myData.userData,session:true}))
     }
-    getDados = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
-        const callMeta = currentRequest()as APICallMeta
+    getDados = async():Promise<ResponseGetAllDados> =>{
 
-         const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
+        const userData:{userID:string} | null = getAuthData()
+    
+        console.log(userData?.userID,'<----------------------- name')
 
-         console.log({myData})
+        if(!userData){
+            throw new APIError(ErrCode.Unauthenticated,'Usuário não está autenticado')
+        }
 
-         const dados = this.selectAllDados({email:myData.userData.email})
+        const dados = this.selectAllDados({email:userData.userID})
 
-        return res.end(JSON.stringify({message:'Meus dados',dados}))
+        console.log(dados)
+     
+        return {message:"Seus dados",dados}
     }
     deleteLogout = async(p:IncomingMessage,res:ServerResponse):Promise<ServerResponse | APIError> =>{
 

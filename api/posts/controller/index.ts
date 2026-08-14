@@ -3,9 +3,11 @@ import { PublishProductBody } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
-import { validateGetuser } from "../middleware/auth";
+
 import { getAuthData } from "encore.dev/internal/codegen/auth";
 import { QueryProducts } from "../database/query";
+import { validateGetuser } from "../../middlewares/auth";
+import { SessionUser } from "../../utils/interfaces";
 
 interface AuthParams {
   sessionId: Cookie<"__Secure-sid">;
@@ -24,7 +26,9 @@ export const authUser = authHandler<AuthParams, User>(async ({ sessionId }) => {
         throw new APIError(ErrCode.Internal,'Erro ao pegar usuário')
     }
 
-    return {userID:validUser.email}
+
+
+    return {userID:validUser.userID.email}
 });
 
 export class PostsProducts extends QueryProducts {
