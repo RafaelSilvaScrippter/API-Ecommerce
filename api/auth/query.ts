@@ -50,7 +50,7 @@ export class QueryAuth{
 
         `).run(session_hash,user_id,0)
     }
-    updateUserData({name,email,password}:updateUser & {name:string}){
+    updateUserData({name,email,password}:updateUser & {name:string | undefined}){
         return this.db.prepare(/*SQL */`
         
             UPDATE  "data_user" 
