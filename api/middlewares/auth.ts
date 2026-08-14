@@ -1,7 +1,7 @@
 import { APIError, ErrCode } from "encore.dev/api"
 import { QueryAuth } from "../auth/query"
-import { ServerResponse } from "http"
-import { SessionUser } from "../auth/utils/interfaces"
+
+
 
 const queryAuth = new QueryAuth()
 export const  validateGetuser = async(cookie:string) =>{
@@ -19,7 +19,9 @@ export const  validateGetuser = async(cookie:string) =>{
                 throw new APIError(ErrCode.Unauthenticated,'Autenticação necessária')
             }
             
-            return {email:getUserPerSession.email,name:getUserPerSession.name,id:getUserPerSession.id}
+            return {userID:{
+                email:getUserPerSession.email,name:getUserPerSession.name,id:getUserPerSession.id
+            }}
            
         }
 
