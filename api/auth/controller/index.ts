@@ -1,5 +1,5 @@
 import {  APIError, ErrCode, HttpStatus } from "encore.dev/api"
-import { BodyCreateUser, BodyUpdateUser, PingParams, PingResponse, ResponseGetAllDados } from "../utilsInterface"
+import { BodyCreateUser, BodyUpdateUser, PingParams, PingResponse, ResponseDataSession, ResponseGetAllDados } from "../utilsInterface"
 import { QueryAuth } from "../query"
 import { randomBytes } from "node:crypto"
 import argon2 from 'argon2'
@@ -115,21 +115,27 @@ export  class ApiAuth extends QueryAuth{
         return {message:'Usuário atualizado',status:HttpStatus.Created}
 
     }
-    getSession = async(req:IncomingMessage,res:ServerResponse):Promise<ServerResponse> =>{
-        const callMeta = currentRequest()as APICallMeta
+    getSession = async():Promise<ResponseDataSession> =>{
+      
+        const {userID}:any = getAuthData();
 
-        
-        const myData:{userData:string} = callMeta.middlewareData?.myMiddlewareData
+        if(!userID){
+            throw new APIError(ErrCode.Unauthenticated,'Usuário não está logado')
+        }
 
-        res.statusCode = 200;
+        console.log(userID)
 
-        return res.end(JSON.stringify({username:myData.userData,session:true}))
+        return {
+            message:"Meus dados",
+            email:userID,
+            status:HttpStatus.Created
+        }
+
     }
     getDados = async():Promise<ResponseGetAllDados> =>{
 
         const userData:{userID:string} | null = getAuthData()
-    
-        console.log(userData?.userID,'<----------------------- name')
+ 
 
         if(!userData){
             throw new APIError(ErrCode.Unauthenticated,'Usuário não está autenticado')
@@ -137,7 +143,6 @@ export  class ApiAuth extends QueryAuth{
 
         const dados = this.selectAllDados({email:userData.userID})
 
-        console.log(dados)
      
         return {message:"Seus dados",dados}
     }
