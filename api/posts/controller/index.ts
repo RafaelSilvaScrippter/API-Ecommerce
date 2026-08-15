@@ -50,18 +50,20 @@ export class PostsProducts extends QueryProducts {
         
 
         const insertVendor = this.insertVendors({vendor_email:userID,product_vendor:insertProcucts.lastInsertRowid})
-        console.log({insertVendor})
+      
 
 
         return {message:"Produto adicionado com sucesso",status:HttpStatus.OK}
     }
     getAllProducts = async():Promise<ProductsResponse> =>{
 
+    
         const products = this.selectAllProducts()
-
+            
         console.log(products)
-
+            
         return {products}
+        
     }
     getSearchProducts = async(name:string):Promise<ProductsResponse> =>{
 
@@ -70,7 +72,15 @@ export class PostsProducts extends QueryProducts {
         }
 
         const products = this.selectSearchProducts({name})
-
+        try{
+            const products = this.selectSearchProducts({name})
+            return {products}
+            
+        }catch(err){
+            
+            console.log(err)
+        }
         return {products}
+
     }
 }
