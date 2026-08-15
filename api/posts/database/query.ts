@@ -51,7 +51,7 @@ export class QueryProducts extends CreateDb{
         return this.db.prepare(/*SQL */`
         
             SELECT * FROM "products" 
-            WHERE "name" LIKE ?%
+            WHERE "name" LIKE ?
             
             
         `).all(name) as {name:string;slug:string;price:string;description:string;src:string}[];

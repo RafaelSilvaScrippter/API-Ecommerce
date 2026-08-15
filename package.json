@@ -6,7 +6,7 @@
   "license": "MPL-2.0",
   "type": "module",
   "scripts": {
-    "test": "vitest --passWithNoTests"
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",
