@@ -1,3 +1,5 @@
+import { Query } from "encore.dev/api";
+
 export  interface PublishProductBody{
     name:string;
     price:string;
@@ -17,4 +19,8 @@ export  interface PublishProductBody{
 
 export interface ProductsResponse {
     products:ResponseAllProducts[]
+}
+
+export interface ParamsProductsSearch{
+    name:string;
 }
