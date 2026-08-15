@@ -30,7 +30,7 @@ export const authAllDados = api({method:'GET',path:"/auth/dados",expose:true,aut
     async():Promise<ResponseGetAllDados> =>  new ApiAuth().getDados()
 
 )
-export const authLogout = api.raw({method:'DELETE',path:"/auth/logout",expose:true,tags:['/auth/logout']},
+export const authLogout = api.raw({method:'DELETE',path:"/auth/logout",expose:true,auth:true},
     async(req,res) =>   new ApiAuth().deleteLogout(req,res)
 )
 

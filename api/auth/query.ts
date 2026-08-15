@@ -67,14 +67,13 @@ export class QueryAuth{
             WHERE "s"."session_hash" = ?
         `).get(sid_hash) as {name:string,email:string,id:number}
     }
-    selectSessionEmail({email}:{email:string}){
-        console.log({email})
+    selectSessionEmail({email,hash}:{email:string,hash:string}){
         return this.db.prepare(/*SQL */ `
         
             SELECT "revoked" FROM "sessions" AS "s"
-            WHERE "s"."user_id" = (SELECT "id" FROM "data_user" WHERE "email" = ?)
+            WHERE "s"."user_id" = (SELECT "id" FROM "data_user" WHERE "email" = ?) AND "s"."session_hash" = ?
             
-        `).get(email) as {revoked:number}
+        `).get(email,hash) as {revoked:number}
     }
     revokedSession({email}:{email:string}){
 
