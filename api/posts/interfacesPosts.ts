@@ -5,3 +5,16 @@ export  interface PublishProductBody{
     vendor:string;
     src:string;
 }
+
+ interface ResponseAllProducts {
+        name:string;
+        slug:string;
+        price:string;
+        description:string;
+        src:string;
+    
+}
+
+export interface ProductsResponse {
+    products:ResponseAllProducts[]
+}

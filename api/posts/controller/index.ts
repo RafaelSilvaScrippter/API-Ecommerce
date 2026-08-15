@@ -1,5 +1,5 @@
 
-import { PublishProductBody } from "../interfacesPosts";
+import { ProductsResponse, PublishProductBody, ResponseAllProducts } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
@@ -54,5 +54,13 @@ export class PostsProducts extends QueryProducts {
 
 
         return {message:"Produto adicionado com sucesso",status:HttpStatus.OK}
+    }
+    getAllProducts = async():Promise<ProductsResponse> =>{
+
+        const products = this.selectAllProducts()
+
+        console.log(products)
+
+        return {products}
     }
 }

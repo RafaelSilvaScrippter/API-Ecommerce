@@ -31,19 +31,20 @@ export class QueryProducts extends CreateDb{
 
     }
     insertVendors({vendor_email,product_vendor}:InsertVendorProduct){
-        try{
-
-            return this.db.prepare(/*SQL */ `
+        return this.db.prepare(/*SQL */ `
                 
             INSERT OR IGNORE INTO "vendors" 
-            ("vendor_email","product_vendor")
-            VALUES 
-            (?,?)
+                ("vendor_email","product_vendor")
+                VALUES 
+            (?,?)   
+        `).run(vendor_email,product_vendor)
+      
+    }
+    selectAllProducts(){
+        return this.db.prepare(/*SQL */ `
+        
+            SELECT * FROM "products"
             
-            
-            `).run(vendor_email,product_vendor)
-        }catch(err){
-            console.log(err)
-        }
+        `).all() as {name:string;slug:string;price:string;description:string;src:string}[];
     }
 }
