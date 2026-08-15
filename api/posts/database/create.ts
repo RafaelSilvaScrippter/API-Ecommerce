@@ -4,7 +4,7 @@ import { createTablesProducts } from "./tables";
 export class CreateDb{
     db:Database.Database;
     constructor(){
-        this.db = new Database('./api/posts/products.sqlite')
+        this.db = new Database('./api/posts/database/products.sqlite')
     }
 
     createTable(){
@@ -12,4 +12,4 @@ export class CreateDb{
     }
 } 
 
-new CreateDb().createTable()
+
