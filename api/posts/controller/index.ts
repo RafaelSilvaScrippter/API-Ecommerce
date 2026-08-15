@@ -1,5 +1,5 @@
 
-import { ProductsResponse, PublishProductBody, ResponseAllProducts } from "../interfacesPosts";
+import { ParamsProductsSearch, ProductsResponse, PublishProductBody } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
@@ -60,6 +60,16 @@ export class PostsProducts extends QueryProducts {
         const products = this.selectAllProducts()
 
         console.log(products)
+
+        return {products}
+    }
+    getSearchProducts = async(name:string):Promise<ProductsResponse> =>{
+
+        if(!name){
+            throw new APIError(ErrCode.InvalidArgument,'Nenhum parâmetro')
+        }
+
+        const products = this.selectSearchProducts({name})
 
         return {products}
     }

@@ -47,4 +47,13 @@ export class QueryProducts extends CreateDb{
             
         `).all() as {name:string;slug:string;price:string;description:string;src:string}[];
     }
+    selectSearchProducts({name}:{name:string}){
+        return this.db.prepare(/*SQL */`
+        
+            SELECT * FROM "products" 
+            WHERE "name" LIKE ?%
+            
+            
+        `).all(name) as {name:string;slug:string;price:string;description:string;src:string}[];
+    }
 }
