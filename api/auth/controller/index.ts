@@ -4,7 +4,6 @@ import { QueryAuth } from "../query"
 import { randomBytes } from "node:crypto"
 import argon2 from 'argon2'
 import { IncomingMessage, ServerResponse } from "node:http"
-import { APICallMeta, currentRequest } from "encore.dev"
 import { getAuthData } from "encore.dev/internal/codegen/auth"
 import { SessionUser } from "../../utils/interfaces"
 export  class ApiAuth extends QueryAuth{
@@ -148,18 +147,20 @@ export  class ApiAuth extends QueryAuth{
     }
     deleteLogout = async(p:IncomingMessage,res:ServerResponse):Promise<ServerResponse | APIError> =>{
 
-        const callMeta = currentRequest()as APICallMeta
+        const {userID}:any = getAuthData() 
 
-        const myData:{userData:{name:string;email:string}} = callMeta.middlewareData?.myMiddlewareData
+        const cookie =  p.headers['cookie']?.replace("__Secure-sid=",'')
 
-        const selectSession = this.selectSessionEmail({email:myData.userData.email})
-
-        
+        if(!cookie){
+            throw new APIError(ErrCode.Unauthenticated,'Cookie inválido')
+        }
+        const selectSession = this.selectSessionEmail({email:userID,hash:cookie})
         if(selectSession.revoked === 1){
             throw new APIError(ErrCode.PermissionDenied,'Nenhuma sessão ativa')
         }
+        
 
-        const revokedSession = this.revokedSession({email:myData.userData.email})
+        const revokedSession = this.revokedSession({email:userID})
 
         if(!revokedSession.changes){
             throw new APIError(ErrCode.Internal,'Erro ao fazer logout')
@@ -169,6 +170,6 @@ export  class ApiAuth extends QueryAuth{
         
         
 
-        return res.end(JSON.stringify({message:"lOGOUT"}))
+        return res.end(JSON.stringify({message:"logout"}))
     }
 } ;
