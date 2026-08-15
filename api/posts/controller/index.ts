@@ -7,7 +7,7 @@ import { authHandler } from "encore.dev/auth";
 import { getAuthData } from "encore.dev/internal/codegen/auth";
 import { QueryProducts } from "../database/query";
 import { validateGetuser } from "../../middlewares/auth";
-import { SessionUser } from "../../utils/interfaces";
+import { CreateDb } from "../database/create";
 
 interface AuthParams {
   sessionId: Cookie<"__Secure-sid">;
@@ -16,6 +16,9 @@ interface AuthParams {
 type User = {
     userID:string;
 }
+
+
+const createDb = new CreateDb().createTable()
 
 // Auth handler that uses cookies
 export const authUser = authHandler<AuthParams, User>(async ({ sessionId }) => {
@@ -34,16 +37,20 @@ export const authUser = authHandler<AuthParams, User>(async ({ sessionId }) => {
 export class PostsProducts extends QueryProducts {
 
     publishProduct = async(p:PublishProductBody):Promise<PingResponse> =>{
-        const user = getAuthData()
+        const {userID}:any = getAuthData()
         
         const slug = p.name + Math.random().toFixed(10).toString();
 
         const insertProcucts = this.insertProducts({name:p.name,slug:slug,price:p.price,description:p.description,src:p.src})
 
-        if(!insertProcucts.changes){
+        if(!insertProcucts.changes || !insertProcucts.lastInsertRowid){
             throw new APIError(ErrCode.Internal,'Erro ao inserir produtos')
         }
+
         
+
+        const insertVendor = this.insertVendors({vendor_email:userID,product_vendor:insertProcucts.lastInsertRowid})
+        console.log({insertVendor})
 
 
         return {message:"Produto adicionado com sucesso",status:HttpStatus.OK}

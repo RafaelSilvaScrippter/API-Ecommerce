@@ -6,7 +6,6 @@ import { PingResponse } from "../auth/utilsInterface";
 
 
 
-
 export const gateway = new Gateway({
   authHandler: authUser,
 });
@@ -16,3 +15,4 @@ export const postProduct =  api({method:"POST",path:"/post/publish",expose:true,
 )
 
 export const client = api.static({expose:true,path:'/postProducts',dir:"./assets"})
+
