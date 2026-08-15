@@ -55,3 +55,9 @@ export interface ResponseGetAllDados {
     message:string;
     dados:GetAllDados
 }
+
+export interface ResponseDataSession {
+    message:string;
+    email:string;
+    status:HttpStatus;
+}
