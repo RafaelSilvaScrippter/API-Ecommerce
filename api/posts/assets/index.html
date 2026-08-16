@@ -23,15 +23,15 @@
             const dados = await response.json()
             console.log(dados)
         }
-        postPublish()
+        // postPublish()
 
     async function posts(){
-        const response = await fetch('/post/product/1')
+        const response = await fetch('/products/my')
         const dados = await response.json()
         console.log(dados)
     }
 
-    // posts()
+    posts()
 
 
     </script>

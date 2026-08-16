@@ -1,5 +1,5 @@
 
-import { ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseProductPerId } from "../interfacesPosts";
+import { ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseMyProducts, ResponseProductPerId } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
@@ -133,4 +133,22 @@ export class PostsProducts extends QueryProducts {
 
         return {message:"Transação",status:HttpStatus.Accepted}
     }
+    getAllMyProducts = async():Promise<ResponseMyProducts> => {
+
+        const {userID}:any = getAuthData()
+
+        if(!userID){
+            throw new APIError(ErrCode.Unauthenticated,"Usuário não está logado")
+        }
+
+        const myProductsPublish = this.getAllMyProduct({email:userID})
+
+        if(!myProductsPublish){
+            throw new APIError(ErrCode.Internal,'Erro ao pegar seus produtos')
+        }
+
+    
+
+        return {products:myProductsPublish, status:HttpStatus.Created}
+}
 }

@@ -41,3 +41,16 @@ export interface ResponseProductPerId{
     status:HttpStatus
 }
 
+
+interface MyProducts{
+    name:string;
+    price:string;
+    src:string;
+    sell:string;
+}
+
+export interface ResponseMyProducts{
+    products:MyProducts[];
+    status:HttpStatus;
+}
+
