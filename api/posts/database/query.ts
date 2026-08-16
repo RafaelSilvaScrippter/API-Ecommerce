@@ -56,4 +56,12 @@ export class QueryProducts extends CreateDb{
             
         `).all(name) as {name:string;slug:string;price:string;description:string;src:string}[];
     }
+    selectProductId({id}:{id:number}){
+        return this.db.prepare(/*SQl */ `
+        
+            SELECT "p".*,"v"."sell" FROM "products" AS "p"
+            INNER JOIN "vendors" AS "v" ON  "v"."id" = ${id}
+            WHERE "p"."product_id" = ?
+        `).get(id) as {product_id:string;name:string;slug:string;price:string;description:string;src:string;sell:string}
+    }
 }
