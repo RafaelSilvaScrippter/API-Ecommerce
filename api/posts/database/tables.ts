@@ -12,6 +12,7 @@ export const createTablesProducts = /*SQL */ `
         "id" INTEGER PRIMARY KEY,
         "vendor_email" TEXT NOT NULL,
         "product_vendor" INTEGER NOT NULL,
+        "sell" TEXT NOT NULL DEFAULT 'false' CHECK ("sell" IN ('false','true')),
         UNIQUE ("product_vendor","vendor_email"),
         FOREIGN KEY ("product_vendor") REFERENCES "products"("product_id") ON DELETE CASCADE
     )STRICT;

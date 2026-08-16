@@ -8,12 +8,10 @@ import { PublishProductBody } from '../interfacesPosts';
     
         async function testePuublishProduct():Promise<unknown>{
 
-            const response = await fetch('http://127.0.0.1:4000/post/product/notebook',{
+            const response = await fetch('http://127.0.0.1:4000/post/products/notebook',{
                 method:"GET"
             })
             const dados = await response.json()
-            console.log(dados)
-
             return dados
 
         }

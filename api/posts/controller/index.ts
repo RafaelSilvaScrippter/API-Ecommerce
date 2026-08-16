@@ -1,5 +1,5 @@
 
-import { ParamsProductsSearch, ProductsResponse, PublishProductBody } from "../interfacesPosts";
+import { ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseProductPerId } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
@@ -82,5 +82,17 @@ export class PostsProducts extends QueryProducts {
         }
         return {products}
 
+    }
+    getProductsPerId = async (id:number):Promise<ResponseProductPerId> =>{
+
+        const product = this.selectProductId({id})
+
+        if(!product){
+            throw new APIError(ErrCode.NotFound,"Nenhum produto encontrado")
+        }
+
+   
+
+     return {product}
     }
 }
