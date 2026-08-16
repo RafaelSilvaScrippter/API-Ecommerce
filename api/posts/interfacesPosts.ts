@@ -1,10 +1,9 @@
-import { Query } from "encore.dev/api";
+import { HttpStatus, Query } from "encore.dev/api";
 
 export  interface PublishProductBody{
     name:string;
     price:string;
     description:string;
-    vendor:string;
     src:string;
 }
 
@@ -18,7 +17,8 @@ export  interface PublishProductBody{
 }
 
 export interface ProductsResponse {
-    products:ResponseAllProducts[]
+    products:ResponseAllProducts[],
+    status:HttpStatus
 }
 
 export interface ParamsProductsSearch{
@@ -32,14 +32,12 @@ interface ProductPerId{
     description:string;
     src:string;
     sell:string;
+    vendor_email:string;
 }
 
 
 export interface ResponseProductPerId{
-    product:ProductPerId
-}
-
-export interface NotFound {
-    message:string;
+    product:ProductPerId;
+    status:HttpStatus
 }
 
