@@ -31,7 +31,14 @@
         console.log(dados)
     }
 
-    posts()
+    // posts()
+    async function sellMyProducts(){
+        const response = await fetch('/products/my/sell')
+        const dados = await response.json()
+        console.log(dados)
+    }
+
+    sellMyProducts()
 
 
     </script>

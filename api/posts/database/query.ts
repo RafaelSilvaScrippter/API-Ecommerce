@@ -92,4 +92,13 @@ export class QueryProducts extends CreateDb{
             
         `).all(email) as {name:string;price:string;src:string;sell:string}[]
     }
+    selectAllMyProductsBuy({email}:{email:string}){
+        return this.db.prepare(/*SQL */ `
+        
+            SELECT "p"."name","p"."price","p"."src","pb"."user" FROM "products" AS "p"
+            INNER JOIN "products_buy" as "pb" ON "pb"."product_buy" = "p"."product_id"
+            WHERE "pb"."user_product_buy" = ?
+            
+        `).all(email) as {name:string;price:string;src:string;user:string}[]
+    }
 }

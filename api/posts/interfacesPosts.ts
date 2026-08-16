@@ -54,3 +54,26 @@ export interface ResponseMyProducts{
     status:HttpStatus;
 }
 
+
+
+interface ProductsDados{
+    name:string;
+    price:string;
+    src:string;
+    user:string
+}
+
+interface ProductsAddres{
+    name:string;
+    email:string;
+    cep:string;
+    cidade:string | null;
+    estado:string | null;
+    numero:string | null;
+    rua:string | null;
+}
+
+export interface ResponseGetMyproductsBuy{
+    products:ProductsDados[];
+    address:ProductsAddres[]
+}
