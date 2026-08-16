@@ -39,6 +39,7 @@ export class PostsProducts extends QueryProducts {
     publishProduct = async(p:PublishProductBody):Promise<PingResponse> =>{
         const {userID}:any = getAuthData()
         
+
         const slug = p.name + Math.random().toFixed(10).toString();
 
         const insertProcucts = this.insertProducts({name:p.name,slug:slug,price:p.price,description:p.description,src:p.src})
@@ -48,21 +49,24 @@ export class PostsProducts extends QueryProducts {
         }
 
         
+            const insertVendor = this.insertVendors({vendor_email:userID,product_vendor:insertProcucts.lastInsertRowid})
+            
+       
 
-        const insertVendor = this.insertVendors({vendor_email:userID,product_vendor:insertProcucts.lastInsertRowid})
-      
-
-
-        return {message:"Produto adicionado com sucesso",status:HttpStatus.OK}
+        return {message:"Produto adicionado com sucesso",status:HttpStatus.Accepted}
     }
     getAllProducts = async():Promise<ProductsResponse> =>{
 
     
         const products = this.selectAllProducts()
-            
+        
+        if(!products){
+            throw new APIError(ErrCode.NotFound,'Nenhum produto encontrado')
+        }
+
         console.log(products)
             
-        return {products}
+        return {products,status:HttpStatus.Accepted}
         
     }
     getSearchProducts = async(name:string):Promise<ProductsResponse> =>{
@@ -72,15 +76,8 @@ export class PostsProducts extends QueryProducts {
         }
 
         const products = this.selectSearchProducts({name})
-        try{
-            const products = this.selectSearchProducts({name})
-            return {products}
-            
-        }catch(err){
-            
-            console.log(err)
-        }
-        return {products}
+      
+        return {products,status:HttpStatus.Accepted}
 
     }
     getProductsPerId = async (id:number):Promise<ResponseProductPerId> =>{
@@ -93,6 +90,47 @@ export class PostsProducts extends QueryProducts {
 
    
 
-     return {product}
+     return {product,status:HttpStatus.Accepted}
+    }
+    postTransationsProduct = async (id:number):Promise<PingResponse> =>{
+
+        const {userID}:any = getAuthData()
+
+        if(!userID){
+            throw new APIError(ErrCode.Unauthenticated,'Usuário não está logado')
+        }
+
+        if(!id){
+            throw new APIError(ErrCode.InvalidArgument,'nenhum produto encontrado')
+        }
+
+        const selectProduct = this.selectProductId({id})
+
+        if(!selectProduct){
+            throw new APIError(ErrCode.NotFound,'Nenhum produto encontrado')
+        }
+
+        if(selectProduct.sell === 'true'){
+            throw new APIError(ErrCode.Unavailable,'Produto já foi comprado')
+        }
+
+        if(userID === selectProduct.vendor_email){
+            throw new APIError(ErrCode.Internal,'Você não pode comprar o seu proprio produto')
+        }
+
+        const insertProductBuy = this.insertProductBuy({id,user_buy:selectProduct.vendor_email,user:userID})
+
+
+        if(!insertProductBuy.changes){
+            throw new APIError(ErrCode.Internal,'Erro ao comprar produto')
+        }
+
+        const updateForTrueSellVendor = this.updateVendors({product_vendor:id})
+
+        if(!updateForTrueSellVendor){
+            throw new APIError(ErrCode.Internal,'Erro ao comprar produto')
+        }
+
+        return {message:"Transação",status:HttpStatus.Accepted}
     }
 }
