@@ -1,5 +1,5 @@
 
-import { ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseMyProducts, ResponseProductPerId } from "../interfacesPosts";
+import { ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseGetMyproductsBuy, ResponseMyProducts, ResponseProductPerId } from "../interfacesPosts";
 import { PingResponse } from "../../auth/utilsInterface";
 import {APIError, Cookie, ErrCode, HttpStatus } from "encore.dev/api";
 import { authHandler } from "encore.dev/auth";
@@ -8,6 +8,7 @@ import { getAuthData } from "encore.dev/internal/codegen/auth";
 import { QueryProducts } from "../database/query";
 import { validateGetuser } from "../../middlewares/auth";
 import { CreateDb } from "../database/create";
+import { QueryAuth } from "../../auth/query";
 
 interface AuthParams {
   sessionId: Cookie<"__Secure-sid">;
@@ -33,6 +34,9 @@ export const authUser = authHandler<AuthParams, User>(async ({ sessionId }) => {
 
     return {userID:validUser.userID.email}
 });
+
+
+const queryAuth = new QueryAuth()
 
 export class PostsProducts extends QueryProducts {
 
@@ -131,7 +135,7 @@ export class PostsProducts extends QueryProducts {
             throw new APIError(ErrCode.Internal,'Erro ao comprar produto')
         }
 
-        return {message:"Transação",status:HttpStatus.Accepted}
+        return {message:"Transação feita",status:HttpStatus.Accepted}
     }
     getAllMyProducts = async():Promise<ResponseMyProducts> => {
 
@@ -150,5 +154,27 @@ export class PostsProducts extends QueryProducts {
     
 
         return {products:myProductsPublish, status:HttpStatus.Created}
-}
+    }
+    getAllMyProductsSell = async():Promise<ResponseGetMyproductsBuy> =>{
+
+        const {userID}:any = getAuthData()
+
+
+        if(!userID){
+            throw new APIError(ErrCode.Unauthenticated,'Usuário não está autenticado')
+        }
+
+        const selectAllProductsMy = this.selectAllMyProductsBuy({email:userID})
+
+        if(!selectAllProductsMy){
+            throw new APIError(ErrCode.Internal,'Erro ap pegar meus produtos')
+        }
+
+        const dados = selectAllProductsMy.map((user) =>{
+            return queryAuth.selectAllDados({email:user.user})
+        })
+
+        
+        return {products:selectAllProductsMy,address:dados}
+    }
 }

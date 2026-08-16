@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
 import {  Gateway } from "encore.dev/api";
-import {ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseMyProducts, ResponseProductPerId } from "./interfacesPosts";
+import {ParamsProductsSearch, ProductsResponse, PublishProductBody, ResponseGetMyproductsBuy, ResponseMyProducts, ResponseProductPerId } from "./interfacesPosts";
 import { authUser, PostsProducts } from "./controller";
 import { PingResponse } from "../auth/utilsInterface";
 
@@ -34,6 +34,10 @@ export const postSellProducts = api({method:"POST",path:"/post/sell/product/:id"
 export const getAllMyProducts = api({method:"GET",path:"/products/my",expose:true,auth:true},
 
     async():Promise<ResponseMyProducts> => new PostsProducts().getAllMyProducts()
+)
+export const getAllMyProductsSell = api({method:"GET",path:"/products/my/sell",expose:true,auth:true},
+
+    async():Promise<ResponseGetMyproductsBuy> => new PostsProducts().getAllMyProductsSell()
 )
 
 export const client = api.static({expose:true,path:'/postProducts',dir:"./assets"})
