@@ -32,14 +32,20 @@
     }
 
     // posts()
-    async function sellMyProducts(){
+    async function sell(){
         const response = await fetch('/products/my/sell')
         const dados = await response.json()
         console.log(dados)
     }
-
-    sellMyProducts()
-
+    
+    // sell()
+    
+    async function buy(){
+        const response = await fetch('/products/my/buy')
+        const dados = await response.json()
+        console.log(dados)
+    }
+    buy()
 
     </script>
 </body>
