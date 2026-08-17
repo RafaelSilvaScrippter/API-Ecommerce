@@ -190,4 +190,34 @@ export class QueryProducts extends CreateDb {
       user: string;
     }[];
   }
+  deleteMyProductPosted({ email, id }: { email: string; id: number }) {
+    return this.db
+      .prepare(
+        /*SQL */ `
+    
+      DELETE FROM "products" WHERE "product_id" = (SELECT "product_vendor" FROM "vendors" WHERE "vendor_email" = ? AND "product_vendor" = ?) 
+      
+      
+    `,
+      )
+      .run(email, id);
+  }
+  selectVendorProductIsSell({
+    email,
+    product_vendor,
+  }: {
+    email: string;
+    product_vendor: number;
+  }) {
+    return this.db
+      .prepare(
+        /*SQL */ `
+    
+      SELECT "sell" FROM "vendors" 
+      WHERE "vendor_email" = ? AND "product_vendor" = ?
+      
+    `,
+      )
+      .get(email, product_vendor) as { sell: string };
+  }
 }

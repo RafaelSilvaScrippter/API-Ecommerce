@@ -70,6 +70,18 @@ export const getAllMyProductsBuy = api(
     new PostsProducts().getAllMyProdcutsSell(),
 );
 
+export const deleteMyProductsPublished = api(
+  {
+    method: "DELETE",
+    path: "/delete/my/products/:id",
+    expose: true,
+    auth: true,
+  },
+
+  async ({ id }: { id: number }): Promise<PingResponse> =>
+    new PostsProducts().deleteMyProcustPublish({ id }),
+);
+
 export const client = api.static({
   expose: true,
   path: "/postProducts",
