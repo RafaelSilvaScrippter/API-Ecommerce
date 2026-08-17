@@ -195,4 +195,47 @@ export class PostsProducts extends QueryProducts {
 
     return { products: selectAllProductsMy };
   };
+  deleteMyProcustPublish = async ({
+    id,
+  }: {
+    id: number;
+  }): Promise<PingResponse> => {
+    const { userID }: any = getAuthData();
+
+    if (!userID) {
+      throw new APIError(
+        ErrCode.Unauthenticated,
+        "Uusário não está autenticado",
+      );
+    }
+
+    if (!id) {
+      throw new APIError(ErrCode.Internal, "Nenhum parametro passado");
+    }
+
+    const selectProduct = this.selectVendorProductIsSell({
+      email: userID,
+      product_vendor: id,
+    });
+    console.log(selectProduct);
+
+    if (!selectProduct) {
+      throw new APIError(ErrCode.Internal, "Erro ao excluir produto");
+    }
+
+    if (selectProduct.sell === "true") {
+      throw new APIError(ErrCode.Unavailable, "Produto já foi vendido");
+    }
+
+    const deeleteMyProduct = this.deleteMyProductPosted({
+      email: userID,
+      id: id,
+    });
+
+    if (!deeleteMyProduct.changes) {
+      throw new APIError(ErrCode.Internal, "Erro ao excluir produto");
+    }
+
+    return { message: "Deletando produtos", status: HttpStatus.Created };
+  };
 }
