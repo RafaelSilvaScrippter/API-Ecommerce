@@ -220,4 +220,17 @@ export class QueryProducts extends CreateDb {
       )
       .get(email, product_vendor) as { sell: string };
   }
+  insertUpdatePathImage({ path }: { path: string }) {
+    return this.db
+      .prepare(
+        /*SQL */ `
+    
+      UPDATE "products"
+      SET "src" = ?
+      WHERE "src" = 'null'
+      
+    `,
+      )
+      .run(path);
+  }
 }

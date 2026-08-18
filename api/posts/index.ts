@@ -11,6 +11,7 @@ import {
 } from "./interfacesPosts";
 import { authUser, PostsProducts } from "./controller";
 import { PingResponse } from "../auth/utilsInterface";
+import { IncomingMessage, ServerResponse } from "node:http";
 
 export const gateway = new Gateway({
   authHandler: authUser,
@@ -80,6 +81,12 @@ export const deleteMyProductsPublished = api(
 
   async ({ id }: { id: number }): Promise<PingResponse> =>
     new PostsProducts().deleteMyProcustPublish({ id }),
+);
+
+export const uploadFileProduct = api.raw(
+  { method: "POST", path: "/upload/product", expose: true, auth: true },
+  async (req: IncomingMessage, res: ServerResponse): Promise<ServerResponse> =>
+    new PostsProducts().uploadFile(req, res),
 );
 
 export const client = api.static({

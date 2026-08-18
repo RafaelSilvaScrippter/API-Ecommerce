@@ -8,22 +8,31 @@
 <body>
     <h1>Teste</h1>
 
+    <form method="POST" enctype="multipart/form-data" action="/upload/product">
+    <label for="filefield">Single file upload:</label><br>
+    <input type="file" name="filefield">
+    <input data-upload type="submit">
+</form>
 
     <script>
 
+        const dataUpload = document.querySelector("[data-upload]")
+
         async function postPublish(){
-            const response = await fetch('/post/sell/product/2',{
+            const response = await fetch('/post/publish',{
                 method:"POST",
                 headers:{
                     'Content-Type':"application/json"
                 },
                 credentials:"include",
-                // body:JSON.stringify({name:"Notebook",price:"2000",description:"Um notebook",src:"./files/notebook.jpg"})
+                body:JSON.stringify({name:"Notebook",price:"2000",description:"Um notebook"})
             })
             const dados = await response.json()
             console.log(dados)
         }
-        // postPublish()
+        dataUpload.addEventListener("click",(e) => {
+            postPublish()
+        })
 
     async function posts(){
         const response = await fetch('/products/my')
@@ -54,7 +63,7 @@
 
         console.log(dados)
     }
-    deleteProduct()
+    // deleteProduct()
 
     </script>
 </body>
