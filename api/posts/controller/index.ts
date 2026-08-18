@@ -21,6 +21,7 @@ import log from "encore.dev/log";
 
 import fs from "node:fs";
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 
 const uploadDir = path.join(process.cwd(), "uploads");
 
@@ -281,5 +282,27 @@ export class PostsProducts extends QueryProducts {
     req.pipe(bb);
 
     return res.end(JSON.stringify({ dados: "Arquivo postado" }));
+  };
+  readFileUpload = async (
+    req: IncomingMessage,
+    res: ServerResponse,
+  ): Promise<ServerResponse> => {
+    console.log(req);
+    const url = new URL(
+      req.url ?? "",
+      "http://127.0.0.1:4000",
+    ).pathname.replace("/read/image/product", "");
+
+    const filepath = path.join(process.cwd(), "uploads", url);
+
+    if (!fs.existsSync(filepath)) {
+      res.statusCode = 404;
+      res.end("Imagem não encontrada");
+    }
+
+    const image = fs.readFileSync(filepath);
+
+    res.setHeader("Content-Type", "image/jpeg");
+    return res.end(image);
   };
 }
