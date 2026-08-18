@@ -1,5 +1,4 @@
 import {
-  ParamsProductsSearch,
   ProductsResponse,
   PublishProductBody,
   ResponseGetMyproductsBuy,
@@ -16,6 +15,16 @@ import { QueryProducts } from "../database/query";
 import { validateGetuser } from "../../middlewares/auth";
 import { CreateDb } from "../database/create";
 import { QueryAuth } from "../../auth/query";
+import { IncomingMessage, ServerResponse } from "node:http";
+import busboy from "busboy";
+import log from "encore.dev/log";
+
+import fs from "node:fs";
+import path from "node:path";
+
+const uploadDir = path.join(process.cwd(), "uploads");
+
+fs.mkdirSync(uploadDir, { recursive: true });
 
 interface AuthParams {
   sessionId: Cookie<"__Secure-sid">;
@@ -38,6 +47,8 @@ export const authUser = authHandler<AuthParams, User>(async ({ sessionId }) => {
   return { userID: validUser.userID.email };
 });
 
+type FileEntry = { data: any[]; filename: string };
+
 const queryAuth = new QueryAuth();
 
 export class PostsProducts extends QueryProducts {
@@ -51,7 +62,7 @@ export class PostsProducts extends QueryProducts {
       slug: slug,
       price: p.price,
       description: p.description,
-      src: p.src,
+      src: "null",
     });
 
     if (!insertProcucts.changes || !insertProcucts.lastInsertRowid) {
@@ -237,5 +248,38 @@ export class PostsProducts extends QueryProducts {
     }
 
     return { message: "Deletando produtos", status: HttpStatus.Created };
+  };
+  uploadFile = async (
+    req: IncomingMessage,
+    res: ServerResponse,
+  ): Promise<ServerResponse> => {
+    const entry: FileEntry = { filename: "", data: [] };
+
+    const bb = busboy({
+      headers: req.headers,
+      limits: { files: 1 },
+    });
+
+    bb.on("file", (_, file, info) => {
+      const filename = `${Date.now()}-${info.filename}`;
+      const filepath = path.join(uploadDir, filename);
+
+      const writeStream = fs.createWriteStream(filepath);
+
+      file.pipe(writeStream);
+
+      writeStream.on("finish", () => {
+        log.info(`File ${filename} uploaded`);
+        this.insertUpdatePathImage({ path: filename });
+      });
+
+      writeStream.on("error", (err) => {
+        log.error(err);
+      });
+    });
+
+    req.pipe(bb);
+
+    return res.end(JSON.stringify({ dados: "Arquivo postado" }));
   };
 }

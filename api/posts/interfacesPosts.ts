@@ -4,7 +4,6 @@ export interface PublishProductBody {
   name: string;
   price: string;
   description: string;
-  src: string;
 }
 
 interface ResponseAllProducts {
