@@ -89,6 +89,13 @@ export const uploadFileProduct = api.raw(
     new PostsProducts().uploadFile(req, res),
 );
 
+export const readFileProduct = api.raw(
+  { method: "GET", path: "/read/image/product/:name", expose: true },
+
+  async (req, res: ServerResponse): Promise<ServerResponse> =>
+    new PostsProducts().readFileUpload(req, res),
+);
+
 export const client = api.static({
   expose: true,
   path: "/postProducts",

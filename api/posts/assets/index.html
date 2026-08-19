@@ -8,9 +8,11 @@
 <body>
     <h1>Teste</h1>
 
+    <img src="/read/image/product/1787071990675-foto.png" alt="">
+<!-- 
     <form method="POST" enctype="multipart/form-data" action="/upload/product">
     <label for="filefield">Single file upload:</label><br>
-    <input type="file" name="filefield">
+    <input type="file" name="filefield"> -->
     <input data-upload type="submit">
 </form>
 
@@ -35,12 +37,12 @@
         })
 
     async function posts(){
-        const response = await fetch('/products/my')
+        const response = await fetch('/post/publish')
         const dados = await response.json()
         console.log(dados)
     }
 
-    // posts()
+    posts()
     async function sell(){
         const response = await fetch('/products/my/sell')
         const dados = await response.json()
@@ -56,13 +58,13 @@
     }
     // buy()
 
-    async function deleteProduct(){
-        const response = await fetch(`/delete/my/products/1`,{method:"DELETE"})
-        const dados = await response.json()
+    // async function deleteProduct(){
+    //     const response = await fetch("/read/image/product/1787071990675-foto.png")
+    //     const dados = await response.text()
 
 
-        console.log(dados)
-    }
+    //     console.log(dados)
+    // }
     // deleteProduct()
 
     </script>
