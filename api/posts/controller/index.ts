@@ -55,8 +55,35 @@ const queryAuth = new QueryAuth();
 export class PostsProducts extends QueryProducts {
   publishProduct = async (p: PublishProductBody): Promise<PingResponse> => {
     const { userID }: any = getAuthData();
+    const stringsRandom = [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+    ];
+    const arrayStrings = [];
 
-    const slug = p.name + Math.random().toFixed(10).toString();
+    for (let i = 0; i < stringsRandom.length; i++) {
+      const random = Math.floor(Math.random() * 15)
+        .toString()
+        .replace(".", "");
+      arrayStrings.push(stringsRandom[Number(random)]);
+    }
+
+    const splitString = arrayStrings.join(",").replaceAll(",", "");
+
+    const slug = `${p.name + splitString}`;
 
     const insertProcucts = this.insertProducts({
       name: p.name,
